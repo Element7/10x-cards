@@ -3,6 +3,7 @@ import type { APIRoute } from "astro";
 // import type { GenerationCreateResponseDTO } from "../../types";
 import { GenerationService } from "../../lib/services/generation.service";
 import { supabaseClient, DEFAULT_USER_ID } from "../../db/supabase.client";
+import { OpenRouterService } from "../../lib/services/openrouter.service";
 
 // Validation schema for the request body
 const generationCreateSchema = z.object({
@@ -10,6 +11,17 @@ const generationCreateSchema = z.object({
     .string()
     .min(1000, "Source text must be at least 1000 characters")
     .max(10000, "Source text cannot exceed 10000 characters"),
+});
+
+// Initialize OpenRouter service with configuration
+const openRouterService = new OpenRouterService({
+  apiKey: import.meta.env.OPENROUTER_API_KEY,
+  endpoint: "https://openrouter.ai/api/v1/chat/completions",
+  defaultModel: "gpt-4",
+  modelParams: {
+    temperature: 0.7,
+    max_tokens: 2000,
+  },
 });
 
 export const prerender = false;
@@ -35,8 +47,8 @@ export const POST: APIRoute = async ({ request }) => {
 
     const { source_text } = validationResult.data;
 
-    // Initialize generation service and create generation using DEFAULT_USER_ID
-    const generationService = new GenerationService(supabaseClient);
+    // Initialize generation service with both required dependencies
+    const generationService = new GenerationService(supabaseClient, openRouterService);
     const result = await generationService.createGeneration(DEFAULT_USER_ID, source_text);
 
     return new Response(JSON.stringify(result), {
