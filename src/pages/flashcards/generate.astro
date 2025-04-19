@@ -1,0 +1,16 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { FlashcardGenerationView } from "@/components/flashcard-generation/FlashcardGenerationView";
+
+// Disable static generation for this page as it requires API access
+export const prerender = false;
+---
+
+<BaseLayout
+  title="Generuj fiszki | 10x Cards"
+  description="Generuj fiszki automatycznie z pomocą AI lub twórz je ręcznie"
+>
+  <main class="min-h-screen bg-background">
+    <FlashcardGenerationView client:load />
+  </main>
+</BaseLayout>

@@ -1,0 +1,23 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Strona nie znaleziona | 10x Cards"
+  description="Przepraszamy, ale strona której szukasz nie istnieje."
+>
+  <main class="flex min-h-screen flex-col items-center justify-center bg-background">
+    <div class="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
+      <h1 class="text-4xl font-bold sm:text-5xl">404 - Strona nie znaleziona</h1>
+      <p class="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
+        Przepraszamy, ale strona której szukasz nie istnieje.
+      </p>
+      <a
+        href="/"
+        class="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+      >
+        Wróć do strony głównej
+      </a>
+    </div>
+  </main>
+</BaseLayout> 
