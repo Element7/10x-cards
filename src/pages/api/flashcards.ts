@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 // import type { FlashcardListResponseDTO } from "../../types";
 // import type { FlashcardCreateDTO } from "../../types";
-import { FlashcardsService } from "../../services/flashcards.service";
+import { FlashcardsService } from "../../lib/services/flashcards.service";
 import { DEFAULT_USER_ID } from "../../db/supabase.client";
 
 // Query parameters validation schema for GET

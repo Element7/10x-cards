@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { APIRoute } from "astro";
 // import type { GenerationCreateResponseDTO } from "../../types";
-import { GenerationService } from "../../lib/services/generationService";
+import { GenerationService } from "../../lib/services/generation.service";
 import { supabaseClient, DEFAULT_USER_ID } from "../../db/supabase.client";
 
 // Validation schema for the request body

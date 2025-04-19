@@ -5,7 +5,7 @@ import type {
   FlashcardSource,
   FlashcardCreateDTO,
   FlashcardCreateResponseDTO,
-} from "../types";
+} from "../../types";
 
 interface GetFlashcardsParams {
   page: number;
