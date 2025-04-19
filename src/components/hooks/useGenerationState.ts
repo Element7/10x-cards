@@ -56,17 +56,48 @@ export const useGenerationState = () => {
   };
 
   const createFlashcard = async (flashcard: FlashcardCreateDTO) => {
-    const id = state.editingFlashcardId ?? state.flashcardSuggestions.length + 1;
+    // For AI-generated flashcards, update the UI state immediately
+    if (flashcard.source === "ai_full" || flashcard.source === "ai_edited") {
+      const id = state.editingFlashcardId ?? 
+        state.flashcardSuggestions.find((f) => f.front === flashcard.front && f.back === flashcard.back)?.id;
+      
+      if (!id) return;
 
-    // Update UI optimistically
-    setState((prev) => ({
-      ...prev,
-      flashcardSuggestions: prev.flashcardSuggestions.map((f) =>
-        f.id === id ? { ...f, isProcessing: true, error: null } : f
-      ),
-    }));
+      const originalFlashcard = state.flashcardSuggestions.find((f) => f.id === id);
+      if (!originalFlashcard) return;
 
-    try {
+      // Remove the flashcard from suggestions immediately
+      setState((prev) => ({
+        ...prev,
+        flashcardSuggestions: prev.flashcardSuggestions.filter((f) => f.id !== id),
+        editingFlashcardId: null,
+      }));
+
+      try {
+        // Simulate error after 3 seconds
+
+        const response = await fetch("/api/flashcards", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ flashcards: [flashcard] }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Błąd podczas zapisywania fiszki");
+        }
+      } catch (error) {
+        // Restore the original flashcard with error
+        setState((prev) => ({
+          ...prev,
+          flashcardSuggestions: [
+            ...prev.flashcardSuggestions,
+            { ...originalFlashcard, error: error instanceof Error ? error.message : "Nieznany błąd" },
+          ],
+        }));
+      }
+    } else {
+      // For manual flashcards, just make the API call
       const response = await fetch("/api/flashcards", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -77,23 +108,6 @@ export const useGenerationState = () => {
         const errorData = await response.json();
         throw new Error(errorData.error || "Błąd podczas zapisywania fiszki");
       }
-
-      // Remove the flashcard from suggestions after successful creation
-      setState((prev) => ({
-        ...prev,
-        flashcardSuggestions: prev.flashcardSuggestions.filter((f) => f.id !== id),
-        editingFlashcardId: null,
-      }));
-    } catch (error) {
-      // Revert optimistic update on error
-      setState((prev) => ({
-        ...prev,
-        flashcardSuggestions: prev.flashcardSuggestions.map((f) =>
-          f.id === id
-            ? { ...f, isProcessing: false, error: error instanceof Error ? error.message : "Nieznany błąd" }
-            : f
-        ),
-      }));
     }
   };
 

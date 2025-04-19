@@ -1,9 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { FlashcardSuggestionDTO, GenerationCreateResponseDTO } from "../../types";
 import crypto from "crypto";
+import { OpenRouterService } from "./openrouter.service";
 
 export class GenerationService {
-  constructor(private readonly supabase: SupabaseClient) {}
+  constructor(
+    private readonly supabase: SupabaseClient,
+    private readonly openRouter: OpenRouterService
+  ) {}
 
   async createGeneration(userId: string, sourceText: string): Promise<GenerationCreateResponseDTO> {
     try {
@@ -15,7 +19,7 @@ export class GenerationService {
         .from("generations")
         .insert({
           user_id: userId,
-          model: "gpt-4", // TODO: Make configurable
+          model: "gpt-4",
           source_text_hash: sourceTextHash,
           source_text_length: sourceText.length,
           generated_count: 0,
@@ -30,27 +34,25 @@ export class GenerationService {
         throw new Error(`Failed to create generation: ${insertError.message}`);
       }
 
-      // TODO: Replace with actual AI service call
-      const mockSuggestions: FlashcardSuggestionDTO[] = [
-        {
-          id: 1,
-          front: "Mock Front 1",
-          back: "Mock Back 1",
-          source: "ai_full",
-        },
-        {
-          id: 2,
-          front: "Mock Front 2",
-          back: "Mock Back 2",
-          source: "ai_full",
-        },
-      ];
+      // Generate flashcards using OpenRouter
+      const startTime = Date.now();
+      const flashcards = await this.openRouter.generateFlashcards(sourceText);
+      const generationDuration = Date.now() - startTime;
 
-      // Update generation with actual count
+      // Map flashcards to DTO format with IDs
+      const flashcardSuggestions: FlashcardSuggestionDTO[] = flashcards.map((card, index) => ({
+        id: index + 1,
+        front: card.front,
+        back: card.back,
+        source: card.source,
+      }));
+
+      // Update generation with actual count and duration
       const { error: updateError } = await this.supabase
         .from("generations")
         .update({
-          generated_count: mockSuggestions.length,
+          generated_count: flashcardSuggestions.length,
+          generation_duration: generationDuration,
         })
         .eq("id", generation.id);
 
@@ -61,8 +63,8 @@ export class GenerationService {
 
       return {
         generation_id: generation.id,
-        flashcard_suggestions: mockSuggestions,
-        generated_count: mockSuggestions.length,
+        flashcard_suggestions: flashcardSuggestions,
+        generated_count: flashcardSuggestions.length,
       };
     } catch (error) {
       // Log any unexpected errors

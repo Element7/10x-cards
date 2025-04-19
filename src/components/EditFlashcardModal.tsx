@@ -40,16 +40,18 @@ export const EditFlashcardModal = ({
     setBack(flashcard.back);
   }, [flashcard]);
 
-  const frontError = validateFlashcardFront(front);
-  const backError = validateFlashcardBack(back);
+  const frontError = validateFlashcardFront(front.trim());
+  const backError = validateFlashcardBack(back.trim());
   const hasError = Boolean(frontError || backError);
+  const isUnchanged = front.trim() === flashcard.front && back.trim() === flashcard.back;
+  const isSaveDisabled = hasError || isProcessing || isUnchanged;
 
   const handleSave = async () => {
-    if (hasError || isProcessing) return;
+    if (isSaveDisabled) return;
 
     await onSave(flashcard.id, {
-      front,
-      back,
+      front: front.trim(),
+      back: back.trim(),
       source: "ai_edited",
       generation_id: null,
     });
@@ -94,7 +96,7 @@ export const EditFlashcardModal = ({
           <Button type="button" variant="outline" onClick={onCancel} disabled={isProcessing}>
             Anuluj
           </Button>
-          <Button type="button" onClick={handleSave} disabled={hasError || isProcessing}>
+          <Button type="button" onClick={handleSave} disabled={isSaveDisabled}>
             {isProcessing ? <LoadingSpinner size="small" /> : "Zapisz"}
           </Button>
         </DialogFooter>
