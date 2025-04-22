@@ -35,7 +35,10 @@ Użytkownicy często rezygnują z tradycyjnego, ręcznego tworzenia fiszek eduka
 - Opis: Jako niezalogowany użytkownik chcę mieć możliwość rejestracji oraz logowania, aby uzyskać bezpieczny dostęp do funkcji zarządzania fiszkami.
 - Kryteria akceptacji:
   - Formularz rejestracji z walidacją danych (adres e-mail, hasło) jest dostępny.
-  - Formularz logowania wykorzystuje sprawdzone rozwiązania uwierzytelniające.
+  - Formularz logowania wykorzystuje sprawdzone rozwiązania uwierzytelniające supabase AUTH.
+  - Użytkownik nie może korzystać z żadnych funkcji aplikacji, do czasu rejestracji i zalogowania.
+  - Logowanie i rejestracja odbywa się na dedykowanych stronach.
+  - Użytkownik może logować się i wylogować się przyciskiem w prawym górnym rogu.
   - Sesje użytkowników są zabezpieczone i chronione.
 
 ### US-002: Generowanie fiszki przez AI
