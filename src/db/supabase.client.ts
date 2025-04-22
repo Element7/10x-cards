@@ -5,6 +5,15 @@ import type { Database } from "./database.types";
 const supabaseUrl = import.meta.env.SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
 
+if (!supabaseUrl) {
+  throw new Error("Missing environment variable: SUPABASE_URL");
+}
+
+if (!supabaseAnonKey) {
+  throw new Error("Missing environment variable: SUPABASE_KEY");
+}
+
 export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
-export const DEFAULT_USER_ID = "c4f9e3dc-5a6d-431a-8ae2-8176fdfe0267";
+// This is only for development purposes and should be removed in production
+export const DEFAULT_USER_ID = "4bc73db4-8af2-4851-899e-fb9538cf200f";

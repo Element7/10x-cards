@@ -1,11 +1,16 @@
 ---
 import "../styles/global.css";
+import { supabaseClient } from "../db/supabase.client";
+import { AuthService } from "../lib/services/auth.service";
 
 interface Props {
   title?: string;
 }
 
 const { title = "10x Astro Starter" } = Astro.props;
+
+const authService = new AuthService(supabaseClient);
+const session = await authService.getSession();
 ---
 
 <!doctype html>
@@ -18,9 +23,42 @@ const { title = "10x Astro Starter" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
+    {
+      session && (
+        <header class="w-full p-4 bg-background border-b">
+          <div class="container flex justify-between items-center">
+            <a href="/" class="text-xl font-bold">
+              10x Cards
+            </a>
+            <button
+              id="logout-button"
+              class="px-4 py-2 bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-md"
+            >
+              Wyloguj się
+            </button>
+          </div>
+        </header>
+      )
+    }
     <slot />
   </body>
 </html>
+
+<script>
+  import { supabaseClient } from "../db/supabase.client";
+  import { AuthService } from "../lib/services/auth.service";
+
+  const authService = new AuthService(supabaseClient);
+
+  document.getElementById("logout-button")?.addEventListener("click", async () => {
+    try {
+      await authService.logout();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Błąd podczas wylogowywania:", error);
+    }
+  });
+</script>
 
 <style>
   html,
