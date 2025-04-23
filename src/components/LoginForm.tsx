@@ -10,6 +10,14 @@ interface ValidationError {
   message: string;
 }
 
+interface LoginResponse {
+  error?: string;
+  details?: ValidationError[];
+  status?: number;
+  name?: string;
+  message?: string;
+}
+
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,6 +30,8 @@ export const LoginForm = () => {
     setIsLoading(true);
 
     try {
+      console.log("Attempting to log in with email:", email);
+
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
@@ -30,20 +40,40 @@ export const LoginForm = () => {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      const data: LoginResponse = await response.json();
+      console.log("Login response status:", response.status);
 
       if (!response.ok) {
+        console.error("Login failed:", {
+          status: response.status,
+          statusText: response.statusText,
+          data,
+        });
+
         if (data.details) {
           setErrors(data.details);
+        } else if (data.error) {
+          let errorMessage = data.error;
+          if (data.name === "AuthApiError" && data.status === 400) {
+            errorMessage = "Nieprawidłowy email lub hasło";
+          }
+          setErrors([{ path: ["form"], message: errorMessage }]);
         } else {
-          setErrors([{ path: ["form"], message: data.error || "Wystąpił błąd podczas logowania" }]);
+          setErrors([{ path: ["form"], message: "Wystąpił nieznany błąd podczas logowania" }]);
         }
         return;
       }
 
+      console.log("Login successful, redirecting...");
       window.location.href = "/flashcards/generate";
     } catch (err) {
-      setErrors([{ path: ["form"], message: "Wystąpił błąd podczas logowania" }]);
+      console.error("Login request failed:", err);
+      setErrors([
+        {
+          path: ["form"],
+          message: "Wystąpił błąd podczas komunikacji z serwerem. Spróbuj ponownie później.",
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -88,7 +118,7 @@ export const LoginForm = () => {
           />
           {getFieldError("password") && <div className="text-sm text-destructive">{getFieldError("password")}</div>}
         </div>
-        {getFormError() && <div className="text-sm text-destructive">{getFormError()}</div>}
+        {getFormError() && <div className="text-sm text-destructive font-medium">{getFormError()}</div>}
       </div>
       <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
         {isLoading ? "Logowanie..." : "Zaloguj się"}

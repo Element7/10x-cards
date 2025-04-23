@@ -1,18 +1,25 @@
 import { defineMiddleware } from "astro:middleware";
-import { createClient } from "@supabase/supabase-js";
-import type { Database } from "../db/database.types";
+import { supabaseClient } from "../db/supabase.client";
+
+const PROTECTED_ROUTES = ["/flashcards/generate"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const supabaseUrl = import.meta.env.SUPABASE_URL;
-  const supabaseKey = import.meta.env.SUPABASE_KEY;
+  // Use the existing Supabase client instance
+  context.locals.supabase = supabaseClient;
 
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Missing required environment variables for Supabase");
+  // Check session
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  context.locals.isAuthenticated = !!session;
+  context.locals.user = session?.user ?? null;
+
+  // Protect routes
+  const isProtectedRoute = PROTECTED_ROUTES.some(route => 
+    context.url.pathname.startsWith(route)
+  );
+
+  if (isProtectedRoute && !context.locals.isAuthenticated) {
+    return context.redirect("/login");
   }
-
-  const supabase = createClient<Database>(supabaseUrl, supabaseKey);
-  
-  context.locals.supabase = supabase;
 
   const response = await next();
   return response;

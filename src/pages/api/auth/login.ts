@@ -9,7 +9,7 @@ const loginSchema = z.object({
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const body = await request.json();
-    console.log("Received login request body:", body);
+    console.log("Received login request for email:", body.email);
 
     const result = loginSchema.safeParse(body);
     
@@ -26,6 +26,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     const { email, password } = result.data;
 
+    if (!locals.supabase) {
+      console.error("Supabase client not found in locals");
+      return new Response(
+        JSON.stringify({ error: "Authentication service unavailable" }), 
+        { status: 500 }
+      );
+    }
+
     const { data, error } = await locals.supabase.auth.signInWithPassword({
       email,
       password,
@@ -35,10 +43,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
       console.error("Supabase auth error:", error);
       return new Response(
         JSON.stringify({ error: error.message }), 
-        { status: 400 }
+        { status: error.status || 400 }
       );
     }
 
+    console.log("Login successful for user:", data.user?.id);
     return new Response(
       JSON.stringify({ data }), 
       { status: 200 }

@@ -1,12 +1,12 @@
 ---
+import PublicLayout from "@/layouts/PublicLayout.astro";
 import Welcome from "../components/Welcome.astro";
-import Layout from "../layouts/Layout.astro";
 import { Button } from "@/components/ui/button";
 ---
 
-<Layout>
+<PublicLayout>
   <a class="flex justify-center items-center" href="/flashcards/generate">
     <Button>Generate Flashcards</Button>
   </a>
   <Welcome />
-</Layout>
+</PublicLayout>
