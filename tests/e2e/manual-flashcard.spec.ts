@@ -16,7 +16,6 @@ test.describe("Manual Flashcard Creation", () => {
   test("should create flashcard manually", async ({ page }) => {
     // 1. Spróbuj przejść bezpośrednio do strony generowania
     await page.goto("/flashcards/generate");
-    
     // 2. Sprawdź czy jesteśmy na stronie logowania
     if (page.url().includes("/login")) {
       const loginPage = new LoginPage(page);
