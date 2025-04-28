@@ -75,7 +75,7 @@ export const ManualCreationForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className={cn("space-y-8", className)}>
+    <form onSubmit={handleSubmit} className={cn("space-y-8", className)} data-testid="manual-creation-form">
       <div className="grid gap-8">
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-between">
@@ -90,6 +90,7 @@ export const ManualCreationForm = ({
                 "text-sm text-muted-foreground",
                 wasSubmitted && (front.trim().length === 0 || front.length > 200) && "text-destructive"
               )}
+              data-testid="front-character-count"
             >
               {front.trim().length} / 200
             </p>
@@ -101,8 +102,13 @@ export const ManualCreationForm = ({
             placeholder="Wprowadź treść przodu fiszki"
             className="h-12 text-base"
             disabled={isProcessing}
+            data-testid="front-input"
           />
-          {frontError && <p className="text-sm font-medium text-destructive">{frontError}</p>}
+          {frontError && (
+            <p className="text-sm font-medium text-destructive" data-testid="front-error">
+              {frontError}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col space-y-2">
@@ -118,6 +124,7 @@ export const ManualCreationForm = ({
                 "text-sm text-muted-foreground",
                 wasSubmitted && (back.trim().length === 0 || back.length > 500) && "text-destructive"
               )}
+              data-testid="back-character-count"
             >
               {back.trim().length} / 500
             </p>
@@ -129,25 +136,34 @@ export const ManualCreationForm = ({
             placeholder="Wprowadź treść tyłu fiszki"
             className="min-h-[300px] resize-y text-base"
             disabled={isProcessing}
+            data-testid="back-input"
           />
-          {backError && <p className="text-sm font-medium text-destructive">{backError}</p>}
+          {backError && (
+            <p className="text-sm font-medium text-destructive" data-testid="back-error">
+              {backError}
+            </p>
+          )}
         </div>
       </div>
 
       <div className="flex items-center gap-4">
-        <Button type="submit" size="lg" disabled={isProcessing} className="min-w-[140px]">
+        <Button type="submit" size="lg" disabled={isProcessing} className="min-w-[140px]" data-testid="save-button">
           {isProcessing ? <LoadingSpinner size="small" /> : "Zapisz fiszkę"}
         </Button>
-        {isProcessing && <p className="text-sm text-muted-foreground">Zapisywanie fiszki...</p>}
+        {isProcessing && (
+          <p className="text-sm text-muted-foreground" data-testid="saving-indicator">
+            Zapisywanie fiszki...
+          </p>
+        )}
         {showSuccess && (
-          <div className="flex items-center gap-2 text-sm font-medium text-green-600">
+          <div className="flex items-center gap-2 text-sm font-medium text-green-600" data-testid="success-message">
             <CheckCircle2 className="h-5 w-5" />
             <span>Fiszka została zapisana</span>
           </div>
         )}
       </div>
 
-      {error && <ErrorMessage message={error} onClose={onErrorClear} />}
+      {error && <ErrorMessage message={error} onClose={onErrorClear} data-testid="error-message" />}
     </form>
   );
 };

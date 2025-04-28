@@ -37,14 +37,15 @@ export const AIGeneratedFlashcardsList = ({
   }
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn("space-y-6", className)} data-testid="flashcards-list-container">
       <BulkActions
         onAcceptAll={onAcceptAll}
         onRejectAll={onRejectAll}
         disabled={flashcards.some((f) => f.isProcessing)}
+        data-testid="bulk-actions"
       />
 
-      <div className="space-y-4">
+      <div className="space-y-4" data-testid="flashcards-list">
         {flashcards.map((flashcard) => (
           <FlashcardSuggestionItem
             key={flashcard.id}
@@ -52,6 +53,7 @@ export const AIGeneratedFlashcardsList = ({
             onAccept={onAccept}
             onEdit={onEdit}
             onReject={onReject}
+            data-testid={`flashcard-item-${flashcard.id}`}
           />
         ))}
       </div>
@@ -66,6 +68,7 @@ export const AIGeneratedFlashcardsList = ({
           isProcessing={editingFlashcard.isProcessing}
           error={editingFlashcard.error}
           onErrorClear={() => onEdit(editingFlashcard.id)}
+          data-testid="edit-flashcard-modal"
         />
       )}
     </div>
