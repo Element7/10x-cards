@@ -1,11 +1,8 @@
 ---
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import PublicLayout from "@/layouts/PublicLayout.astro";
 ---
 
-<BaseLayout
-  title="Strona nie znaleziona | 10x Cards"
-  description="Przepraszamy, ale strona której szukasz nie istnieje."
->
+<PublicLayout title="Strona nie znaleziona | 10x Cards">
   <main class="flex min-h-screen flex-col items-center justify-center bg-background">
     <div class="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
       <h1 class="text-4xl font-bold sm:text-5xl">404 - Strona nie znaleziona</h1>
@@ -20,4 +17,4 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
       </a>
     </div>
   </main>
-</BaseLayout> 
+</PublicLayout>

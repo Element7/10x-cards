@@ -8,14 +8,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.supabase = supabaseClient;
 
   // Check session
-  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  const {
+    data: { session },
+  } = await supabaseClient.auth.getSession();
   context.locals.isAuthenticated = !!session;
   context.locals.user = session?.user ?? null;
 
   // Protect routes
-  const isProtectedRoute = PROTECTED_ROUTES.some(route => 
-    context.url.pathname.startsWith(route)
-  );
+  const isProtectedRoute = PROTECTED_ROUTES.some((route) => context.url.pathname.startsWith(route));
 
   if (isProtectedRoute && !context.locals.isAuthenticated) {
     return context.redirect("/login");

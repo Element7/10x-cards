@@ -2,17 +2,13 @@
 
 import type { SupabaseClientType, User } from "./db/supabase.client";
 
-interface Locals {
-  supabase: SupabaseClientType;
-  isAuthenticated: boolean;
-  user: User | null;
-}
-
-declare namespace App {
-  interface Locals {
-    supabase: SupabaseClientType;
-    isAuthenticated: boolean;
-    user: User | null;
+declare global {
+  namespace App {
+    interface Locals {
+      supabase: SupabaseClientType;
+      isAuthenticated: boolean;
+      user: User | null;
+    }
   }
 }
 

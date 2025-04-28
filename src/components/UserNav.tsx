@@ -1,12 +1,15 @@
 import { LogOut } from "lucide-react";
+import { useState } from "react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
 
 interface UserNavProps {
   email?: string;
 }
 
 export function UserNav({ email }: UserNavProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
   const initials = email
     ? email
         .split("@")[0]
@@ -31,26 +34,26 @@ export function UserNav({ email }: UserNavProps) {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Avatar className="h-8 w-8 cursor-pointer">
+    <div className="relative">
+      <Button variant="ghost" className="relative h-8 w-8 rounded-full" onClick={() => setIsOpen(!isOpen)}>
+        <Avatar className="h-8 w-8">
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <div className="flex items-center justify-start gap-2 p-2">
-          <div className="flex flex-col space-y-1 leading-none">
-            {email && <p className="font-medium text-sm text-gray-900">{email}</p>}
-          </div>
+      </Button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-56 rounded-md border bg-white py-1 shadow-lg">
+          <div className="px-4 py-2">{email && <p className="text-sm font-medium text-gray-900">{email}</p>}</div>
+
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Wyloguj się</span>
+          </button>
         </div>
-        <DropdownMenuItem
-          onClick={handleLogout}
-          className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Wyloguj się</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      )}
+    </div>
   );
 }

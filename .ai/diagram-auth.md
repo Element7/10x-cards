@@ -1,8 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: false
----
 Jesteś specjalistą ds. bezpieczeństwa, którego zadaniem jest utworzenie diagramu Mermaid w celu wizualizacji przepływu autentykacji dla modułu logowania i rejestracji. Diagram powinien zostać utworzony w następującym pliku: DESTINATION
 
 Będziesz musiał odnieść się do następujących plików w celu poznania istniejących wymagań:

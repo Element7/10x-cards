@@ -6,6 +6,7 @@
 - [Tech Stack](#tech-stack)
 - [Getting Started Locally](#getting-started-locally)
 - [Available Scripts](#available-scripts)
+- [Testing Approach](#testing-approach)
 - [Project Scope](#project-scope)
 - [Project Status](#project-status)
 - [License](#license)
@@ -20,6 +21,7 @@
 - **Styling:** Tailwind CSS 4, shadcn/ui
 - **Backend:** Supabase (PostgreSQL, authentication)
 - **AI Integration:** Openrouter.ai for accessing models (OpenAI, Anthropic, Google, etc.) with cost control
+- **Testing:** Vitest, React Testing Library, Playwright
 - **CI/CD & Hosting:** GitHub Actions, DigitalOcean
 
 ## Getting Started Locally
@@ -57,6 +59,22 @@
 - **lint:** Runs ESLint to analyze code quality (`npm run lint`)
 - **lint:fix:** Automatically fixes linting errors (`npm run lint:fix`)
 - **format:** Formats code using Prettier (`npm run format`)
+
+## Testing Approach
+
+The project implements a comprehensive testing strategy:
+
+- **Unit Tests:** Using Vitest and React Testing Library to test individual components and functions.
+- **E2E Tests:** Playwright for automated end-to-end testing of critical user flows.
+- **Testing Process:**
+  - Linting checks in pre-commit hooks (using husky)
+  - Unit and E2E tests run on every build
+  - Smoke tests executed after deployment
+- **Key Test Scenarios:**
+  - User authentication
+  - Flashcard creation and management
+  - AI-powered flashcard generation
+  - Error handling for API integrations
 
 ## Project Scope
 
