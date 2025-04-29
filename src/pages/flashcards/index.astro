@@ -1,14 +1,83 @@
 ---
-const title = "Lista Fiszek";
+import Layout from "@/layouts/Layout.astro";
+import { Button } from "@/components/ui/button";
+import { FlashcardsList } from "@/components/FlashcardsList";
+import { Toaster } from "@/components/ui/sonner";
+import type { Database } from "@/db/database.types";
+
+// Disable static generation for this page as it requires API access
+export const prerender = false;
+
+type Flashcard = Database["public"]["Tables"]["flashcards"]["Row"];
+
+const { isAuthenticated, user, supabase } = Astro.locals;
+
+if (!isAuthenticated || !user) {
+  return Astro.redirect("/login");
+}
+
+// Get page from query params or default to 1
+const page = Number(Astro.url.searchParams.get("page")) || 1;
+const limit = 10;
+const from = (page - 1) * limit;
+const to = from + limit - 1;
+
+const {
+  data: flashcards,
+  error,
+  count,
+} = await supabase
+  .from("flashcards")
+  .select("*", { count: "exact" })
+  .eq("user_id", user.id)
+  .order("created_at", { ascending: false })
+  .range(from, to);
+
+if (error) {
+  console.error("Error fetching flashcards:", error);
+  throw new Error("Failed to fetch flashcards");
+}
+
+const pagination = {
+  page,
+  limit,
+  total: count || 0,
+};
 ---
 
-<html lang="pl">
-  <head>
-    <meta charset="UTF-8" />
-    <title>{title}</title>
-  </head>
-  <body>
-    <h1>{title}</h1>
-    <p>Prezentacja listy fiszek.</p>
-  </body>
-</html>
+<Layout title="Moje fiszki | 10x Cards">
+  <main class="min-h-screen bg-background">
+    <div class="container mx-auto max-w-3xl py-8 space-y-8">
+      <div class="flex items-center justify-between">
+        <h1 class="text-3xl font-bold">Moje fiszki</h1>
+        <div class="flex items-center gap-2">
+          <Button disabled>Rozpocznij sesję nauki</Button>
+        </div>
+      </div>
+
+      <FlashcardsList 
+        client:load 
+        initialFlashcards={flashcards || []} 
+        currentPage={page}
+      />
+
+      {
+        pagination.total > limit && (
+          <div class="flex justify-center gap-2 mt-4">
+            {page > 1 && (
+              <a href={`/flashcards?page=${page - 1}`}>
+                <Button variant="outline">Poprzednia</Button>
+              </a>
+            )}
+            {page * limit < pagination.total && (
+              <a href={`/flashcards?page=${page + 1}`}>
+                <Button variant="outline">Następna</Button>
+              </a>
+            )}
+          </div>
+        )
+      }
+    </div>
+  </main>
+  <Toaster />
+</Layout>
