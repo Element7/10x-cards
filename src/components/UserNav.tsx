@@ -37,7 +37,9 @@ export function UserNav({ email }: UserNavProps) {
     <div className="relative">
       <Button variant="ghost" className="relative h-8 w-8 rounded-full" onClick={() => setIsOpen(!isOpen)}>
         <Avatar className="h-8 w-8">
-          <AvatarFallback>{initials}</AvatarFallback>
+          <AvatarFallback className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+            {initials}
+          </AvatarFallback>
         </Avatar>
       </Button>
 

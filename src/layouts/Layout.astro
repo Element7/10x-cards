@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { UserNav } from "../components/UserNav";
+import { Logo } from "../components/Logo";
 
 interface Props {
   title?: string;
@@ -26,7 +27,7 @@ const { user, isAuthenticated } = Astro.locals;
           <div class="container max-w-3xl h-14 flex justify-center mx-auto items-center">
             <div class="mr-4 flex">
               <a href="/" class="mr-6 flex items-center space-x-2">
-                <span class="font-bold text-xl">10xCards</span>
+                <Logo client:load />
               </a>
             </div>
             <div class="flex-1 flex items-center justify-between space-x-2">
