@@ -19,11 +19,19 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
 
+      - name: Cache ESLint results
+        uses: actions/cache@v4
+        with:
+          path: .eslintcache
+          key: ${{ runner.os }}-eslint-v9-${{ hashFiles('eslint.config.js', 'package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-eslint-v9-
+
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --prefer-offline --no-audit
 
       - name: Run linter
-        run: npm run lint
+        run: npm run lint -- --max-warnings=0 --cache --cache-location=.eslintcache
 
       - name: Upload lint results
         uses: actions/upload-artifact@v4
@@ -68,8 +76,8 @@ jobs:
     environment: integration
     env:
       PLAYWRIGHT_TEST_BASE_URL: ${{ secrets.PLAYWRIGHT_TEST_BASE_URL }}
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      SUPABASE_URL: ${{ secrets.TEST_SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.TEST_SUPABASE_KEY }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
       - name: Checkout repository
