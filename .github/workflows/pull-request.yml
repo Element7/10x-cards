@@ -58,16 +58,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run unit tests with coverage
-        run: npm run test:coverage
-
-      - name: Upload test coverage
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: unit-test-coverage
-          path: coverage/
-          retention-days: 7
+      - name: Run unit tests
+        run: npm run test
 
   e2e-tests:
     name: E2E Tests
@@ -114,12 +106,6 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - name: Download unit test coverage
-        uses: actions/download-artifact@v4
-        with:
-          name: unit-test-coverage
-          path: unit-coverage
-
       - name: Download Playwright test results
         uses: actions/download-artifact@v4
         with:
@@ -137,34 +123,12 @@ jobs:
               context.payload.workflow_run.conclusion === 'success' : 
               ${{ needs.unit-tests.result == 'success' && needs.e2e-tests.result == 'success' }};
 
-            let unitCoverageSummary = 'No unit test coverage data available';
-            try {
-              if (fs.existsSync('./unit-coverage/coverage-summary.json')) {
-                const unitCoverage = JSON.parse(fs.readFileSync('./unit-coverage/coverage-summary.json', 'utf8'));
-                const total = unitCoverage.total;
-                unitCoverageSummary = `
-                | Type | Percentage |
-                | ---- | ---------- |
-                | Lines | ${total.lines.pct}% |
-                | Statements | ${total.statements.pct}% |
-                | Functions | ${total.functions.pct}% |
-                | Branches | ${total.branches.pct}% |
-                `;
-              }
-            } catch (error) {
-              console.error('Error reading unit test coverage:', error);
-            }
-
             const statusIcon = allJobsSuccess ? '✅' : '❌';
             const statusMessage = allJobsSuccess ? 'All checks passed!' : 'Some checks failed. Please check the details.';
 
             const comment = `## Pull Request Status ${statusIcon}
 
             ${statusMessage}
-
-            ### Unit Test Coverage
-
-            ${unitCoverageSummary}
 
             ### E2E Tests
 
