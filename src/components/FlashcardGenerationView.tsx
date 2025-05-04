@@ -51,12 +51,14 @@ export const FlashcardGenerationView = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-muted/5 py-12">
+    <div className="flex min-h-screen flex-col items-center bg-muted/5 py-12" data-testid="flashcard-generation-view">
       <div className="container max-w-3xl px-4">
         <div className="mb-12 flex flex-col items-center space-y-6 text-center">
           <div className="flex w-full items-center justify-between">
-            <h1 className="text-3xl font-bold tracking-tight">Generowanie fiszek</h1>
-            <Button variant="outline" size="sm" asChild>
+            <h1 className="text-3xl font-bold tracking-tight" data-testid="page-title">
+              Generowanie fiszek
+            </h1>
+            <Button variant="outline" size="sm" asChild data-testid="generations-history-link">
               <a href="/generations" className="flex items-center gap-2">
                 <History size={16} />
                 Historia generacji
@@ -66,13 +68,18 @@ export const FlashcardGenerationView = () => {
           <p className="max-w-2xl text-lg text-muted-foreground">
             Wybierz tryb generowania fiszek - automatycznie z pomocą AI lub ręcznie.
           </p>
-          <ModeToggle currentMode={state.mode} onModeChange={setMode} className="w-full max-w-md" />
+          <ModeToggle
+            currentMode={state.mode}
+            onModeChange={setMode}
+            className="w-full max-w-md"
+            data-testid="mode-toggle"
+          />
         </div>
 
         <div className="space-y-8">
           {state.mode === "ai" ? (
             <>
-              <div className="rounded-xl border bg-card p-8 shadow-sm">
+              <div className="rounded-xl border bg-card p-8 shadow-sm" data-testid="ai-generation-container">
                 <div className="mb-8">
                   <h2 className="text-xl font-semibold">Generowanie z AI</h2>
                   <p className="mt-2 text-sm text-muted-foreground">
@@ -85,6 +92,7 @@ export const FlashcardGenerationView = () => {
                   isGenerating={state.isGenerating}
                   error={state.generationError}
                   onErrorClear={clearError}
+                  data-testid="ai-generation-form"
                 />
               </div>
 
@@ -98,10 +106,11 @@ export const FlashcardGenerationView = () => {
                 onCancelEdit={() => editFlashcard(0)}
                 onAcceptAll={handleAcceptAllFlashcards}
                 onRejectAll={rejectAllFlashcards}
+                data-testid="ai-generated-flashcards-list"
               />
             </>
           ) : (
-            <div className="rounded-xl border bg-card p-8 shadow-sm">
+            <div className="rounded-xl border bg-card p-8 shadow-sm" data-testid="manual-creation-container">
               <div className="mb-8">
                 <h2 className="text-xl font-semibold">Tworzenie ręczne</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
@@ -113,6 +122,7 @@ export const FlashcardGenerationView = () => {
                 isProcessing={state.isGenerating}
                 error={state.generationError}
                 onErrorClear={clearError}
+                data-testid="manual-creation-form"
               />
             </div>
           )}

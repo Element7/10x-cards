@@ -1,12 +1,73 @@
 ---
-import Welcome from "../components/Welcome.astro";
-import Layout from "../layouts/Layout.astro";
+import PublicLayout from "@/layouts/PublicLayout.astro";
 import { Button } from "@/components/ui/button";
+import { UserNav } from "@/components/UserNav";
+import { Logo } from "@/components/Logo";
+
+const { user, isAuthenticated } = Astro.locals;
 ---
 
-<Layout>
-  <a class="flex justify-center items-center" href="/flashcards/generate">
-    <Button>Generate Flashcards</Button>
-  </a>
-  <Welcome />
-</Layout>
+<PublicLayout>
+  {
+    isAuthenticated ? (
+      <>
+        <header class="stick top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div class="container max-w-3xl h-14 flex justify-center mx-auto items-center">
+            <div class="mr-4 flex">
+              <a href="/" class="mr-6 flex items-center space-x-2">
+                <Logo client:load />
+              </a>
+            </div>
+            <div class="flex-1 flex items-center justify-between space-x-2">
+              <nav class="flex items-center space-x-6">
+                <a href="/flashcards/generate" class="text-sm font-medium transition-colors hover:text-primary">
+                  Generuj fiszki
+                </a>
+                <a href="/flashcards" class="text-sm font-medium transition-colors hover:text-primary">
+                  Moje fiszki
+                </a>
+              </nav>
+              <UserNav client:load email={user?.email} />
+            </div>
+          </div>
+        </header>
+        <main class="min-h-[calc(100vh-3.5rem)] flex flex-col items-center justify-center gap-8 p-4">
+          <h1 class="text-6xl font-bold text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            Fiszki AI
+          </h1>
+          <div class="flex gap-4">
+            <a href="/flashcards/generate">
+              <Button variant="default" size="lg">
+                Generuj fiszki
+              </Button>
+            </a>
+            <a href="/flashcards">
+              <Button variant="outline" size="lg">
+                Moje fiszki
+              </Button>
+            </a>
+          </div>
+        </main>
+      </>
+    ) : (
+      <div class="flex min-h-screen flex-col items-center justify-center">
+        <div class="mx-auto max-w-[64rem] text-center">
+          <h1 class="text-4xl font-bold sm:text-5xl">
+            <Logo client:load className="text-4xl sm:text-5xl" />
+          </h1>
+          <p class="mt-4 text-lg text-muted-foreground">
+            Twórz i zarządzaj fiszkami z pomocą sztucznej inteligencji.
+          </p>
+          <div class="mt-8 flex justify-center gap-4">
+            <a href="/login">
+              <Button size="lg">Zaloguj się</Button>
+            </a>
+            <a href="/register">
+              <Button variant="outline" size="lg">Zarejestruj się</Button>
+            </a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+</PublicLayout>

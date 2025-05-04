@@ -36,33 +36,6 @@ interface RequestPayload {
   modelParams?: Partial<OpenRouterConfig["modelParams"]>;
 }
 
-interface OpenRouterResponse<T = unknown> {
-  choices: [
-    {
-      message: {
-        content: string;
-        role: string;
-      };
-      finish_reason: string;
-    },
-  ];
-  model: string;
-  usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-}
-
-interface FlashcardData {
-  front: string;
-  back: string;
-}
-
-interface FlashcardsResponse {
-  flashcards: FlashcardData[];
-}
-
 // Error types
 class OpenRouterError extends Error {
   constructor(
@@ -135,30 +108,6 @@ const openRouterResponseSchema = z.object({
 });
 
 // JSON Schema for OpenRouter API
-const flashcardsJsonSchema: ResponseFormat = {
-  type: "json_schema",
-  json_schema: {
-    name: "FlashcardsResponse",
-    strict: true,
-    schema: {
-      type: "object",
-      properties: {
-        flashcards: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              front: { type: "string" },
-              back: { type: "string" },
-            },
-            required: ["front", "back"],
-          },
-        },
-      },
-      required: ["flashcards"],
-    },
-  },
-};
 
 export class OpenRouterService {
   private readonly config: OpenRouterConfig;
@@ -205,14 +154,14 @@ export class OpenRouterService {
 
   private async formatRequest(payload: RequestPayload): Promise<unknown> {
     const messages = [];
-    
+
     if (payload.system) {
       messages.push({
         role: "system",
         content: payload.system,
       });
     }
-    
+
     messages.push({
       role: "user",
       content: payload.user,

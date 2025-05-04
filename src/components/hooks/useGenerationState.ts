@@ -58,9 +58,10 @@ export const useGenerationState = () => {
   const createFlashcard = async (flashcard: FlashcardCreateDTO) => {
     // For AI-generated flashcards, update the UI state immediately
     if (flashcard.source === "ai_full" || flashcard.source === "ai_edited") {
-      const id = state.editingFlashcardId ?? 
+      const id =
+        state.editingFlashcardId ??
         state.flashcardSuggestions.find((f) => f.front === flashcard.front && f.back === flashcard.back)?.id;
-      
+
       if (!id) return;
 
       const originalFlashcard = state.flashcardSuggestions.find((f) => f.id === id);

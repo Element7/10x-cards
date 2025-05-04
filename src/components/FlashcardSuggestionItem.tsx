@@ -24,29 +24,51 @@ export const FlashcardSuggestionItem = ({
   const { id, front, back, isProcessing, error } = flashcard;
 
   return (
-    <Card className={cn("relative overflow-hidden", className)}>
+    <Card className={cn("relative overflow-hidden", className)} data-testid={`flashcard-item-${id}`}>
       <CardContent className="space-y-4 p-6">
         <div className="space-y-2">
           <h3 className="font-medium">Przód</h3>
-          <p className="text-sm text-muted-foreground">{front}</p>
+          <p className="text-sm text-muted-foreground" data-testid="flashcard-front">
+            {front}
+          </p>
         </div>
         <div className="space-y-2">
           <h3 className="font-medium">Tył</h3>
-          <p className="text-sm text-muted-foreground">{back}</p>
+          <p className="text-sm text-muted-foreground" data-testid="flashcard-back">
+            {back}
+          </p>
         </div>
-        {error && <ErrorMessage message={error} className="mt-4" />}
+        {error && <ErrorMessage message={error} className="mt-4" data-testid="flashcard-error" />}
       </CardContent>
 
       <CardFooter className="flex justify-end gap-2 p-6 pt-0">
-        <Button variant="outline" size="sm" onClick={() => onReject(id)} disabled={isProcessing}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onReject(id)}
+          disabled={isProcessing}
+          data-testid="reject-button"
+        >
           <X className="h-4 w-4" />
           <span className="ml-2">Odrzuć</span>
         </Button>
-        <Button variant="outline" size="sm" onClick={() => onEdit(id)} disabled={isProcessing}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onEdit(id)}
+          disabled={isProcessing}
+          data-testid="edit-button"
+        >
           <Pencil className="h-4 w-4" />
           <span className="ml-2">Edytuj</span>
         </Button>
-        <Button variant="default" size="sm" onClick={() => onAccept(id)} disabled={isProcessing}>
+        <Button
+          variant="default"
+          size="sm"
+          onClick={() => onAccept(id)}
+          disabled={isProcessing}
+          data-testid="accept-button"
+        >
           {isProcessing ? (
             <LoadingSpinner size="small" />
           ) : (

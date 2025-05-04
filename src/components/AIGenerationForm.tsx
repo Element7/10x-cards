@@ -42,7 +42,7 @@ export const AIGenerationForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className={cn("space-y-6", className)}>
+    <form onSubmit={handleSubmit} className={cn("space-y-6", className)} data-testid="ai-generation-form">
       <div className="space-y-4">
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-between">
@@ -58,6 +58,7 @@ export const AIGenerationForm = ({
                 wasSubmitted && sourceText.length < 1000 && "text-destructive",
                 wasSubmitted && sourceText.length > 10000 && "text-destructive"
               )}
+              data-testid="character-count"
             >
               {sourceText.length} / 10000
             </p>
@@ -69,20 +70,29 @@ export const AIGenerationForm = ({
             placeholder="Wprowadź tekst źródłowy (min. 1000 znaków)"
             className="min-h-[400px] resize-y font-mono text-sm"
             disabled={isGenerating}
+            data-testid="source-text-input"
           />
           <p className="text-sm text-muted-foreground">Min. 1000 znaków, max. 10000 znaków</p>
-          {validationError && <p className="text-sm font-medium text-destructive">{validationError}</p>}
+          {validationError && (
+            <p className="text-sm font-medium text-destructive" data-testid="validation-error">
+              {validationError}
+            </p>
+          )}
         </div>
       </div>
 
       <div className="flex items-center gap-4">
-        <Button type="submit" size="lg" disabled={isGenerating} className="min-w-[140px]">
+        <Button type="submit" size="lg" disabled={isGenerating} className="min-w-[140px]" data-testid="generate-button">
           {isGenerating ? <LoadingSpinner size="small" /> : "Generuj fiszki"}
         </Button>
-        {isGenerating && <p className="text-sm text-muted-foreground">Generowanie może potrwać kilka sekund...</p>}
+        {isGenerating && (
+          <p className="text-sm text-muted-foreground" data-testid="generating-indicator">
+            Generowanie może potrwać kilka sekund...
+          </p>
+        )}
       </div>
 
-      {error && <ErrorMessage message={error} onClose={onErrorClear} />}
+      {error && <ErrorMessage message={error} onClose={onErrorClear} data-testid="error-message" />}
     </form>
   );
 };

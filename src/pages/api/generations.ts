@@ -2,7 +2,6 @@ import { z } from "zod";
 import type { APIRoute } from "astro";
 // import type { GenerationCreateResponseDTO } from "../../types";
 import { GenerationService } from "../../lib/services/generation.service";
-import { supabaseClient, DEFAULT_USER_ID } from "../../db/supabase.client";
 import { OpenRouterService } from "../../lib/services/openrouter.service";
 
 // Validation schema for the request body
@@ -26,8 +25,16 @@ const openRouterService = new OpenRouterService({
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
+    // Check if user is authenticated
+    if (!locals.user?.id) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     // Parse and validate request body
     const body = await request.json();
     const validationResult = generationCreateSchema.safeParse(body);
@@ -48,8 +55,8 @@ export const POST: APIRoute = async ({ request }) => {
     const { source_text } = validationResult.data;
 
     // Initialize generation service with both required dependencies
-    const generationService = new GenerationService(supabaseClient, openRouterService);
-    const result = await generationService.createGeneration(DEFAULT_USER_ID, source_text);
+    const generationService = new GenerationService(locals.supabase, openRouterService);
+    const result = await generationService.createGeneration(locals.user.id, source_text);
 
     return new Response(JSON.stringify(result), {
       status: 201,

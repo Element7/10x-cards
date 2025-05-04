@@ -3,7 +3,6 @@ import { z } from "zod";
 // import type { FlashcardListResponseDTO } from "../../types";
 // import type { FlashcardCreateDTO } from "../../types";
 import { FlashcardsService } from "../../lib/services/flashcards.service";
-import { DEFAULT_USER_ID } from "../../db/supabase.client";
 
 // Query parameters validation schema for GET
 const QueryParamsSchema = z.object({
@@ -29,6 +28,10 @@ export const prerender = false;
 
 export const GET: APIRoute = async ({ request, locals }) => {
   try {
+    if (!locals.user?.id) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    }
+
     const url = new URL(request.url);
     const rawParams = Object.fromEntries(url.searchParams.entries());
     const params = QueryParamsSchema.parse(rawParams);
@@ -36,7 +39,7 @@ export const GET: APIRoute = async ({ request, locals }) => {
     const flashcardsService = new FlashcardsService(locals.supabase);
     const response = await flashcardsService.getFlashcards({
       ...params,
-      userId: DEFAULT_USER_ID,
+      userId: locals.user.id,
     });
 
     return new Response(JSON.stringify(response), {
@@ -61,13 +64,17 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
+    if (!locals.user?.id) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    }
+
     const body = await request.json();
     const { flashcards } = CreateFlashcardsSchema.parse(body);
 
     const flashcardsService = new FlashcardsService(locals.supabase);
     const response = await flashcardsService.createFlashcards({
       flashcards,
-      userId: DEFAULT_USER_ID,
+      userId: locals.user.id,
     });
 
     return new Response(JSON.stringify(response), {
