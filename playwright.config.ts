@@ -54,14 +54,13 @@ export default defineConfig({
     },
   ],
 
-  /* Run your local dev server before starting the tests 
+  /* Run your local dev server before starting the tests */
   webServer: {
-    command: "npm run dev",
+    command: process.env.CI ? "npm run build && npm run preview" : "npm run dev:e2e",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     stdout: "pipe",
     stderr: "pipe",
     timeout: 120000, // 2 minutes timeout
   },
-  */
 });
