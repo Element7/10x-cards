@@ -77,72 +77,37 @@ export const ManualCreationForm = ({
   return (
     <form onSubmit={handleSubmit} className={cn("space-y-8", className)} data-testid="manual-creation-form">
       <div className="grid gap-8">
-        <div className="flex flex-col space-y-2">
-          <div className="flex items-center justify-between">
-            <label
-              htmlFor="front"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Przód fiszki
-            </label>
-            <p
-              className={cn(
-                "text-sm text-muted-foreground",
-                wasSubmitted && (front.trim().length === 0 || front.length > 200) && "text-destructive"
-              )}
-              data-testid="front-character-count"
-            >
-              {front.trim().length} / 200
-            </p>
-          </div>
+        <div className="space-y-2">
+          <label htmlFor="front" className="text-sm font-medium">
+            Przód fiszki
+          </label>
           <Input
             id="front"
+            aria-label="Przód fiszki"
             value={front}
             onChange={(e) => handleInputChange("front", e.target.value)}
-            placeholder="Wprowadź treść przodu fiszki"
-            className="h-12 text-base"
+            placeholder="Przód fiszki (max. 200 znaków)"
             disabled={isProcessing}
-            data-testid="front-input"
           />
-          {frontError && (
-            <p className="text-sm font-medium text-destructive" data-testid="front-error">
-              {frontError}
-            </p>
-          )}
+          {frontError && <p className="text-sm text-destructive">{frontError}</p>}
+          <p className="text-sm text-muted-foreground">{front.length} / 200</p>
         </div>
 
-        <div className="flex flex-col space-y-2">
-          <div className="flex items-center justify-between">
-            <label
-              htmlFor="back"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Tył fiszki
-            </label>
-            <p
-              className={cn(
-                "text-sm text-muted-foreground",
-                wasSubmitted && (back.trim().length === 0 || back.length > 500) && "text-destructive"
-              )}
-              data-testid="back-character-count"
-            >
-              {back.trim().length} / 500
-            </p>
-          </div>
+        <div className="space-y-2">
+          <label htmlFor="back" className="text-sm font-medium">
+            Tył fiszki
+          </label>
           <Textarea
             id="back"
+            aria-label="Tył fiszki"
             value={back}
             onChange={(e) => handleInputChange("back", e.target.value)}
-            placeholder="Wprowadź treść tyłu fiszki"
-            className="min-h-[300px] resize-y text-base"
+            placeholder="Tył fiszki (max. 500 znaków)"
+            className="min-h-[100px] resize-y"
             disabled={isProcessing}
-            data-testid="back-input"
           />
-          {backError && (
-            <p className="text-sm font-medium text-destructive" data-testid="back-error">
-              {backError}
-            </p>
-          )}
+          {backError && <p className="text-sm text-destructive">{backError}</p>}
+          <p className="text-sm text-muted-foreground">{back.length} / 500</p>
         </div>
       </div>
 

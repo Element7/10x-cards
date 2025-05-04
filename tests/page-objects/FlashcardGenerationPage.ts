@@ -17,16 +17,20 @@ export class FlashcardGenerationPage {
     this.manualModeButton = page.getByTestId("manual-mode-toggle");
 
     // Formularz manualny
-    this.frontInput = page.getByLabel("Przód fiszki");
-    this.backInput = page.getByLabel("Tył fiszki");
-    this.saveButton = page.getByRole("button", { name: "Zapisz fiszkę" });
+    this.frontInput = page.locator("#front");
+    this.backInput = page.locator("#back");
+    this.saveButton = page.getByTestId("save-button");
     this.successMessage = page.getByTestId("success-message");
   }
 
   async switchToManualMode() {
+    // First ensure the manual mode button is visible and clickable
+    await this.manualModeButton.waitFor({ state: "visible" });
     await this.manualModeButton.click();
-    // Poczekaj na pojawienie się formularza
-    await expect(this.frontInput).toBeVisible();
+
+    // Wait for the manual creation container to appear
+    await this.page.waitForSelector('[data-testid="manual-creation-container"]', { state: "visible", timeout: 10000 });
+    await this.frontInput.waitFor({ state: "visible", timeout: 10000 });
   }
 
   async createFlashcard(front: string, back: string) {
