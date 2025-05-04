@@ -16,25 +16,21 @@ test.describe("Manual Flashcard Creation", () => {
   test("should create flashcard manually", async ({ page }) => {
     // 1. Spróbuj przejść bezpośrednio do strony generowania
     await page.goto("/flashcards/generate");
-    // 2. Sprawdź czy jesteśmy na stronie logowania
+
+    // 2. Sprawdź czy jesteśmy na stronie logowania i zaloguj się jeśli trzeba
     if (page.url().includes("/login")) {
       const loginPage = new LoginPage(page);
       await loginPage.login(TEST_USERNAME, TEST_PASSWORD);
-      // Poczekaj na przekierowanie po zalogowaniu
-      await expect(page).toHaveURL(/.*\/flashcards\/generate/);
     }
 
-    // 3. Teraz powinniśmy być na stronie generowania
+    // 3. Poczekaj na załadowanie strony generowania
+    await page.waitForSelector('[data-testid="flashcard-generation-view"]', { state: "visible" });
+
+    // 4. Kontynuuj test
     const flashcardPage = new FlashcardGenerationPage(page);
     await flashcardPage.switchToManualMode();
-
-    // 4. Stwórz fiszkę
     await flashcardPage.createFlashcard("Testowy przód fiszki", "Testowy tył fiszki");
-
-    // 5. Sprawdź czy operacja się powiodła
     await flashcardPage.expectSuccessMessage();
-
-    // 6. Sprawdź czy formularz został wyczyszczony
     await flashcardPage.expectFormToBeClear();
   });
 });

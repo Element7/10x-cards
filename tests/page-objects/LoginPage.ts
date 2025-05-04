@@ -19,11 +19,14 @@ export class LoginPage {
   }
 
   async login(email: string, password: string) {
-    console.log(email, password);
-
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
-    await this.signInButton.click();
+
+    // Wait for both click and navigation
+    await Promise.all([this.page.waitForNavigation(), this.signInButton.click()]);
+
+    // Additional wait to ensure we're fully logged in
+    await this.page.waitForLoadState("networkidle");
   }
 
   async expectToBeOnLoginPage() {
